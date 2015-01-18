@@ -8,6 +8,7 @@ function preload () {
 
 var player;
 var cursors;
+var pointer;
 var startTime;
 var playTime;
 
@@ -32,28 +33,36 @@ function create () {
 
   // Key controls
   cursors = game.input.keyboard.createCursorKeys();
+
   
 }
 
 function update () {
+  // console.log('pointer', game.input.activePointer);
 
   // Check if player has collided with the world bounds
   if (playerHasCollidedWithWorldBounds()) {
     endGame();
   }
 
-  if (cursors.left.isDown) {
+  if (game.input.activePointer.isDown) {
+    if (game.input.activePointer.positionDown.x < player.body.position.x) {
+      player.body.velocity.x = -80;
+      player.body.velocity.y = -400;
+    } else {
+      player.body.velocity.x = 80;
+      player.body.velocity.y = -400;
+    }
+  }
 
+  if (cursors.left.isDown) {
     player.body.velocity.x = -80;
     player.body.velocity.y = -400;
+  }  
 
-  } else if (cursors.right.isDown) {
-
+  if (cursors.right.isDown) {
     player.body.velocity.x = 80;
     player.body.velocity.y = -400;
-  
-  } else {
-
   }
 
 }
@@ -68,5 +77,16 @@ function playerHasCollidedWithWorldBounds () {
 function endGame () {
   game.paused = true;
 
-  console.log('You played for:', Math.floor((Date.now() - startTime) / 1000), 'seconds');
+  // console.log('You played for:', Math.floor((Date.now() - startTime) / 1000), 'seconds');
 }
+
+// function jumpLeft () {
+//   player.body.velocity.x = -80;
+//   player.body.velocity.y = -400;
+// }
+
+// function jumpRight () {
+//   player.body.velocity.x = 80;
+//   player.body.velocity.y = -400;
+// }
+
