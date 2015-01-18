@@ -1,4 +1,4 @@
-var game = new Phaser.Game(300, 500, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(300, 500, Phaser.CANVAS, '', { preload: preload, create: create, update: update });
 
 function preload () {
   game.load.image('background', 'assets/vinyl_bg.png');
@@ -8,8 +8,12 @@ function preload () {
 
 var player;
 var cursors;
+var startTime;
+var playTime;
 
 function create () {
+
+  startTime = Date.now();
 
   // Enable Arcade Physics system
   // game.Physics.startSystem(Phaser.Physics.ARCADE);
@@ -24,6 +28,7 @@ function create () {
   game.physics.arcade.enable(player);
   // Player physics properties. player should fall at a speed based on the gravity level.
   player.body.gravity.y = 800;
+  player.body.collideWorldBounds = true;
 
   // Key controls
   cursors = game.input.keyboard.createCursorKeys();
@@ -31,6 +36,12 @@ function create () {
 }
 
 function update () {
+
+  // Check if player has collided with the world bounds
+  if (playerHasCollidedWithWorldBounds()) {
+    endGame();
+  }
+
   if (cursors.left.isDown) {
 
     player.body.velocity.x = -80;
@@ -45,4 +56,17 @@ function update () {
 
   }
 
+}
+
+function playerHasCollidedWithWorldBounds () {
+  // horizontal collision check
+  if (player.body.blocked.left || player.body.blocked.right) { return true; }
+  // vertical collision check
+  if (player.body.blocked.up || player.body.blocked.down) { return true; }
+}
+
+function endGame () {
+  game.paused = true;
+
+  console.log('You played for:', Math.floor((Date.now() - startTime) / 1000), 'seconds');
 }
